@@ -4,12 +4,6 @@ variable "separator" {
   default     = "."
 }
 
-variable "space" {
-  type        = string
-  description = "Single character to replace space where required."
-  default     = "_"
-}
-
 variable "tags" {
   type        = map(string)
   description = "Map of tags to be used instead of the ones composed automatically."
