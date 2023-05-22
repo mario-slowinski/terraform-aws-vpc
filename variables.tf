@@ -34,6 +34,7 @@ variable "names_keys" {
   type        = list(string)
   description = "List of tags keys to be used for name composition."
   default = [
+    "environment",
     "vendor",
     "product",
   ]
