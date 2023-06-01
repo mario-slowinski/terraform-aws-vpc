@@ -1,3 +1,9 @@
+variable "name" {
+  type        = string
+  description = "Resource name."
+  default     = null
+}
+
 variable "separator" {
   type        = string
   description = "Single character to separate segments in object's name."
