@@ -1,4 +1,4 @@
-resource "aws_vpc_peering_connection" "this" {
+resource "aws_vpc_peering_connection" "many" {
   for_each = {
     for peering_connection in var.peering_connections :
     peering_connection.peer_vpc_id => peering_connection
@@ -26,4 +26,8 @@ resource "aws_vpc_peering_connection" "this" {
   }
 
   tags = merge(local.tags, local.Name, var.tags, each.value.tags)
+
+  depends_on = [
+    aws_vpc.this,
+  ]
 }
