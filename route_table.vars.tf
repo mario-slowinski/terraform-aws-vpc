@@ -1,6 +1,7 @@
 variable "route_tables" {
   type = list(object({
     name             = optional(string)
+    default          = bool                          # Whether to manage default route table
     propagating_vgws = optional(list(string))        # A list of virtual gateways for propagation.
     routes = list(object({                           # List of VPC routing table routes.
       destination_cidr_block      = optional(string) # The destination CIDR block.
@@ -21,5 +22,5 @@ variable "route_tables" {
     tags = optional(map(string))
   }))
   description = "List of VPC routing tables."
-  default     = [{ routes = null }]
+  default     = [{ default = false, routes = null }]
 }

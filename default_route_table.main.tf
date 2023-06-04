@@ -1,11 +1,11 @@
-resource "aws_route_table" "many" {
+resource "aws_default_route_table" "default" {
   for_each = {
     for route_table in var.route_tables :
     coalesce(route_table.name, aws_vpc.this.id) => route_table
-    if route_table.routes != null && !route_table.default
+    if route_table.routes != null && route_table.default
   }
-  vpc_id           = aws_vpc.this.id
-  propagating_vgws = each.value.propagating_vgws
+  default_route_table_id = aws_vpc.this.default_route_table_id
+  propagating_vgws       = each.value.propagating_vgws
 
   dynamic "route" {
     for_each = {
@@ -20,7 +20,6 @@ resource "aws_route_table" "many" {
       cidr_block                 = route.value.destination_cidr_block
       ipv6_cidr_block            = route.value.destination_ipv6_cidr_block
       destination_prefix_list_id = route.value.destination_prefix_list_id
-      carrier_gateway_id         = route.value.carrier_gateway_id
       core_network_arn           = route.value.core_network_arn
       egress_only_gateway_id     = route.value.egress_only_gateway_id
       gateway_id = try(
@@ -32,7 +31,6 @@ resource "aws_route_table" "many" {
         null
       )
       nat_gateway_id       = route.value.nat_gateway_id
-      local_gateway_id     = route.value.local_gateway_id
       network_interface_id = route.value.network_interface_id
       transit_gateway_id   = route.value.transit_gateway_id
       vpc_endpoint_id      = route.value.vpc_endpoint_id
