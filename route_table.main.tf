@@ -48,7 +48,6 @@ resource "aws_route_table" "many" {
   }
 
   tags = merge(
-    local.tags,
     local.Name,
     var.tags,
     { Name = each.value.name },

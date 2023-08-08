@@ -25,7 +25,7 @@ resource "aws_vpc_peering_connection" "many" {
     }
   }
 
-  tags = merge(local.tags, local.Name, var.tags, each.value.tags)
+  tags = merge(local.Name, var.tags, each.value.tags)
 
   depends_on = [
     aws_vpc.this,

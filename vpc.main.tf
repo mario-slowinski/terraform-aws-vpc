@@ -12,5 +12,5 @@ resource "aws_vpc" "this" {
   enable_dns_hostnames                 = var.enable_dns_hostnames
   assign_generated_ipv6_cidr_block     = var.assign_generated_ipv6_cidr_block
 
-  tags = merge(local.tags, local.Name, var.tags)
+  tags = merge(var.tags, local.Name)
 }

@@ -46,7 +46,6 @@ resource "aws_default_route_table" "default" {
   }
 
   tags = merge(
-    local.tags,
     local.Name,
     var.tags,
     { Name = each.value.name },
