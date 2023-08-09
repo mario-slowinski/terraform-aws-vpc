@@ -1,4 +1,4 @@
-resource "aws_route_table" "many" {
+resource "aws_route_table" "id" {
   for_each = {
     for route_table in var.route_tables :
     coalesce(route_table.name, aws_vpc.this.id) => route_table
@@ -31,7 +31,14 @@ resource "aws_route_table" "many" {
         # if not => set to null meaning other attribute should be used
         null
       )
-      nat_gateway_id       = route.value.nat_gateway_id
+      nat_gateway_id = try(
+        # if regex matches => use given nat_gateway_id
+        regex("^igw-[0-9a-z]{17}$", route.value.nat_gateway_id),
+        # if not => try to use the one created in this module
+        aws_nat_gateway.this[route.value.nat_gateway_id].id,
+        # if not => set to null meaning other attribute should be used
+        null
+      )
       local_gateway_id     = route.value.local_gateway_id
       network_interface_id = route.value.network_interface_id
       transit_gateway_id   = route.value.transit_gateway_id
@@ -47,12 +54,7 @@ resource "aws_route_table" "many" {
     }
   }
 
-  tags = merge(
-    local.Name,
-    var.tags,
-    { Name = each.value.name },
-    each.value.tags
-  )
+  tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
 
   depends_on = [
     aws_vpc_peering_connection.many,
