@@ -58,5 +58,6 @@ resource "aws_route_table" "id" {
 
   depends_on = [
     aws_vpc_peering_connection.vpc,
+    aws_subnet.name,
   ]
 }
