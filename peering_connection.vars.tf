@@ -1,5 +1,6 @@
 variable "peering_connections" {
   type = list(object({
+    name          = string           # Peering connection name
     auto_accept   = optional(bool)   # Accept the peering (both VPCs need to be in the same AWS account and region).
     peer_owner_id = optional(string) # The AWS account ID of the owner of the peer VPC.
     peer_region   = optional(string) # The region of the accepter VPC of the VPC Peering Connection.
@@ -13,5 +14,5 @@ variable "peering_connections" {
     tags = optional(map(string))
   }))
   description = "List of VPC peering connections."
-  default     = [{ peer_vpc_id = null }]
+  default     = [{ name = null, peer_vpc_id = null }]
 }
