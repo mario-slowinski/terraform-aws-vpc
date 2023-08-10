@@ -16,6 +16,6 @@ resource "aws_subnet" "name" {
   map_public_ip_on_launch                        = each.value.map_public_ip_on_launch
   outpost_arn                                    = each.value.outpost_arn
   private_dns_hostname_type_on_launch            = each.value.private_dns_hostname_type_on_launch
-  vpc_id                                         = coalesce(each.value.vpc_id, local.vpc_id)
+  vpc_id                                         = coalesce(each.value.vpc_id, local.vpc.id)
   tags                                           = merge(each.value.tags, { Name = each.key })
 }

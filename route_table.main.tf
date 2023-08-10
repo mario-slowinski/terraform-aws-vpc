@@ -4,7 +4,7 @@ resource "aws_route_table" "id" {
     coalesce(route_table.name, local.vpc_id.id) => route_table
     if route_table.routes != null && !route_table.default
   }
-  vpc_id           = local.vpc_id.id
+  vpc_id           = local.vpc.id
   propagating_vgws = each.value.propagating_vgws
 
   dynamic "route" {
