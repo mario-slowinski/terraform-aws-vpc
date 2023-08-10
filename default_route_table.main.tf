@@ -1,10 +1,10 @@
 resource "aws_default_route_table" "default" {
   for_each = {
     for route_table in var.route_tables :
-    coalesce(route_table.name, aws_vpc.this.id) => route_table
+    coalesce(route_table.name, local.vpc_id.id) => route_table
     if route_table.routes != null && route_table.default
   }
-  default_route_table_id = aws_vpc.this.default_route_table_id
+  default_route_table_id = local.vpc_id.default_route_table_id
   propagating_vgws       = each.value.propagating_vgws
 
   dynamic "route" {

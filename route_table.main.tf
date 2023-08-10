@@ -1,10 +1,10 @@
 resource "aws_route_table" "id" {
   for_each = {
     for route_table in var.route_tables :
-    coalesce(route_table.name, aws_vpc.this.id) => route_table
+    coalesce(route_table.name, local.vpc_id.id) => route_table
     if route_table.routes != null && !route_table.default
   }
-  vpc_id           = aws_vpc.this.id
+  vpc_id           = local.vpc_id.id
   propagating_vgws = each.value.propagating_vgws
 
   dynamic "route" {
@@ -33,7 +33,7 @@ resource "aws_route_table" "id" {
       )
       nat_gateway_id = try(
         # if regex matches => use given nat_gateway_id
-        regex("^igw-[0-9a-z]{17}$", route.value.nat_gateway_id),
+        regex("^nat-[0-9a-z]{17}$", route.value.nat_gateway_id),
         # if not => try to use the one created in this module
         aws_nat_gateway.this[route.value.nat_gateway_id].id,
         # if not => set to null meaning other attribute should be used

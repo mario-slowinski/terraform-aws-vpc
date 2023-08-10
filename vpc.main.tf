@@ -1,4 +1,6 @@
-resource "aws_vpc" "this" {
+resource "aws_vpc" "name" {
+  for_each = var.name != null ? toset([var.name]) : toset([])
+
   cidr_block                           = var.cidr_block
   instance_tenancy                     = var.instance_tenancy
   ipv4_ipam_pool_id                    = var.ipv4_ipam_pool_id

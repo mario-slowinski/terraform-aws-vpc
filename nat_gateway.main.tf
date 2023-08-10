@@ -1,10 +1,15 @@
-resource "aws_nat_gateway" "subnet" {
-  for_each = { for nat_gateway in var.nat_gateways : nat_gateway.subnet_id => nat_gateway if nat_gateway.subnet_id != null }
+resource "aws_nat_gateway" "name" {
+  for_each = { for nat_gateway in var.nat_gateways : nat_gateway.name => nat_gateway if nat_gateway.name != null }
 
-  allocation_id                      = each.value.allocation_id
-  connectivity_type                  = each.value.connectivity_type
-  private_ip                         = each.value.private_ip
-  subnet_id                          = each.value.subnet_id
+  allocation_id     = each.value.allocation_id
+  connectivity_type = each.value.connectivity_type
+  private_ip        = each.value.private_ip
+  subnet_id = try(
+    # if regex matches => use given subnet_id
+    regex("^subnet-[0-9a-z]{17}$", each.value.subnet_id),
+    # if not => try to use the one created in this module
+    local.subnets[each.value.subnet_id]
+  )
   secondary_allocation_ids           = each.value.secondary_allocation_ids
   secondary_private_ip_address_count = each.value.secondary_private_ip_address_count
   secondary_private_ip_addresses     = each.value.secondary_private_ip_addresses

@@ -1,5 +1,6 @@
 variable "nat_gateways" {
   type = list(object({
+    name                               = string                 # NAT gateway name
     allocation_id                      = optional(string)       # The Allocation ID of the Elastic IP address for the NAT Gateway.
     connectivity_type                  = optional(string)       # Connectivity type for the NAT Gateway. Valid values are private and public.
     private_ip                         = optional(string)       # The private IPv4 address to assign to the NAT Gateway.
@@ -10,5 +11,5 @@ variable "nat_gateways" {
     tags                               = optional(map(string))  # A map of tags to assign to the resource.
   }))
   description = "resource to create a VPC NAT Gateway."
-  default     = [{ subnet_id = null }]
+  default     = [{ name = null, subnet_id = null }]
 }
