@@ -13,7 +13,7 @@ resource "aws_nat_gateway" "name" {
     # if regex matches => use given subnet_id
     regex("^subnet-[0-9a-z]{17}$", each.value.subnet_id),
     # if not => try to use the one created in this module
-    local.subnets[each.value.subnet_id]
+    local.subnets[each.value.subnet_id].id
   )
   secondary_allocation_ids           = each.value.secondary_allocation_ids
   secondary_private_ip_address_count = each.value.secondary_private_ip_address_count
