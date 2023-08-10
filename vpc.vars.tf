@@ -1,3 +1,9 @@
+variable "name" {
+  type        = string
+  description = "VPC name."
+  default     = null
+}
+
 variable "cidr_block" {
   type        = string
   description = "The IPv4 CIDR block for the VPC."
@@ -68,4 +74,10 @@ variable "assign_generated_ipv6_cidr_block" {
   type        = bool
   description = "Requests an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC."
   default     = null
+}
+
+variable "tags" {
+  type        = map(string)
+  description = "Map of tags to be used instead of the ones composed automatically."
+  default     = {}
 }
