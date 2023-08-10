@@ -27,7 +27,7 @@ resource "aws_route_table" "id" {
         # if regex matches => use given gateway_id
         regex("^igw-[0-9a-z]{17}$", route.value.gateway_id),
         # if not => try to use the one created in this module
-        aws_internet_gateway.this[route.value.gateway_id].id,
+        aws_internet_gateway.name[route.value.gateway_id].id,
         # if not => set to null meaning other attribute should be used
         null
       )
@@ -35,7 +35,7 @@ resource "aws_route_table" "id" {
         # if regex matches => use given nat_gateway_id
         regex("^nat-[0-9a-z]{17}$", route.value.nat_gateway_id),
         # if not => try to use the one created in this module
-        aws_nat_gateway.this[route.value.nat_gateway_id].id,
+        aws_nat_gateway.name[route.value.nat_gateway_id].id,
         # if not => set to null meaning other attribute should be used
         null
       )

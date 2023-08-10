@@ -26,11 +26,18 @@ resource "aws_default_route_table" "default" {
         # if regex matches => use given gateway_id
         regex("^igw-[0-9a-z]{17}$", route.value.gateway_id),
         # if not => try to use the one created in this module
-        aws_internet_gateway.this[route.value.gateway_id].id,
+        aws_internet_gateway.name[route.value.gateway_id].id,
         # if not => set to null meaning other attribute should be used
         null
       )
-      nat_gateway_id       = route.value.nat_gateway_id
+      nat_gateway_id = try(
+        # if regex matches => use given nat_gateway_id
+        regex("^nat-[0-9a-z]{17}$", route.value.nat_gateway_id),
+        # if not => try to use the one created in this module
+        aws_nat_gateway.name[route.value.nat_gateway_id].id,
+        # if not => set to null meaning other attribute should be used
+        null
+      )
       network_interface_id = route.value.network_interface_id
       transit_gateway_id   = route.value.transit_gateway_id
       vpc_endpoint_id      = route.value.vpc_endpoint_id

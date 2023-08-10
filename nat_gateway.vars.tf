@@ -10,6 +10,6 @@ variable "nat_gateways" {
     secondary_private_ip_addresses     = optional(list(string)) # A list of secondary private IPv4 addresses to assign to the NAT Gateway.
     tags                               = optional(map(string))  # A map of tags to assign to the resource.
   }))
-  description = "resource to create a VPC NAT Gateway."
+  description = "List of VPC NAT Gateways."
   default     = [{ name = null, subnet_id = null }]
 }
