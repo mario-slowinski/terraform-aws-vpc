@@ -57,6 +57,6 @@ resource "aws_route_table" "id" {
   tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
 
   depends_on = [
-    aws_vpc_peering_connection.many,
+    aws_vpc_peering_connection.vpc,
   ]
 }

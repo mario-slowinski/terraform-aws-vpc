@@ -53,6 +53,6 @@ resource "aws_default_route_table" "default" {
   )
 
   depends_on = [
-    aws_vpc_peering_connection.many,
+    aws_vpc_peering_connection.vpc,
   ]
 }

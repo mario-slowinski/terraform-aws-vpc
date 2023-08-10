@@ -10,4 +10,8 @@ resource "aws_eip" "name" {
   network_interface         = each.value.network_interface
   public_ipv4_pool          = each.value.public_ipv4_pool
   tags                      = merge(each.value.tags, { Name = each.key })
+
+  depends_on = [
+    aws_vpc.name,
+  ]
 }
