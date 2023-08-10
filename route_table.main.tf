@@ -1,8 +1,8 @@
 resource "aws_route_table" "id" {
   for_each = {
     for route_table in var.route_tables :
-    coalesce(route_table.name, local.vpc_id.id) => route_table
-    if route_table.routes != null && !route_table.default
+    coalesce(route_table.name, local.vpc.id) => route_table
+    if route_table.routes != null && route_table.default_route_table_id == null
   }
   vpc_id           = local.vpc.id
   propagating_vgws = each.value.propagating_vgws
@@ -47,7 +47,7 @@ resource "aws_route_table" "id" {
         # if regex matches => use given vpc_peering_connection_id
         regex("^pcx-[0-9a-z]{17}$", route.value.vpc_peering_connection_id),
         # if not => try to use the one created in this module pointed by vpc_id
-        aws_vpc_peering_connection.many[route.value.vpc_peering_connection_id].id,
+        aws_vpc_peering_connection.vpc[route.value.vpc_peering_connection_id].id,
         # if not => set to null meaning other attribute should be used
         null
       )

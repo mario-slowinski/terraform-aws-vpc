@@ -1,10 +1,10 @@
 resource "aws_default_route_table" "default" {
   for_each = {
     for route_table in var.route_tables :
-    coalesce(route_table.name, local.vpc_id.id) => route_table
-    if route_table.routes != null && route_table.default
+    coalesce(route_table.name, try(local.vpc.id, null)) => route_table
+    if route_table.routes != null && route_table.default_route_table_id != null
   }
-  default_route_table_id = local.vpc_id.default_route_table_id
+  default_route_table_id = coalesce(each.value.default_route_table_id, try(local.vpc.default_route_table_id, null))
   propagating_vgws       = each.value.propagating_vgws
 
   dynamic "route" {
@@ -38,19 +38,14 @@ resource "aws_default_route_table" "default" {
         # if regex matches => use given vpc_peering_connection_id
         regex("^pcx-[0-9a-z]{17}$", route.value.vpc_peering_connection_id),
         # if not => try to use the one created in this module pointed by vpc_id
-        aws_vpc_peering_connection.many[route.value.vpc_peering_connection_id].id,
+        aws_vpc_peering_connection.vpc[route.value.vpc_peering_connection_id].id,
         # if not => set to null meaning other attribute should be used
         null
       )
     }
   }
 
-  tags = merge(
-    local.Name,
-    var.tags,
-    { Name = each.value.name },
-    each.value.tags
-  )
+  tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
 
   depends_on = [
     aws_vpc_peering_connection.vpc,
