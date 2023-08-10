@@ -1,7 +1,12 @@
 resource "aws_nat_gateway" "name" {
   for_each = { for nat_gateway in var.nat_gateways : nat_gateway.name => nat_gateway if nat_gateway.name != null }
 
-  allocation_id     = each.value.allocation_id
+  allocation_id = try(
+    # if regex matches => use given allocation_id
+    regex("^eipalloc-[0-9a-z]{17}$", each.value.allocation_id),
+    # if not => try to use the one created in this module
+    local.eips[each.value.allocation_id]
+  )
   connectivity_type = each.value.connectivity_type
   private_ip        = each.value.private_ip
   subnet_id = try(
