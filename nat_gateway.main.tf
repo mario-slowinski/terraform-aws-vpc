@@ -5,7 +5,7 @@ resource "aws_nat_gateway" "name" {
     # if regex matches => use given allocation_id
     regex("^eipalloc-[0-9a-z]{17}$", each.value.allocation_id),
     # if not => try to use the one created in this module
-    local.eips[each.value.allocation_id]
+    local.eips[each.value.allocation_id].id
   )
   connectivity_type = each.value.connectivity_type
   private_ip        = each.value.private_ip
