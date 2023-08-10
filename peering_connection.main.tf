@@ -9,7 +9,7 @@ resource "aws_vpc_peering_connection" "many" {
   peer_owner_id = each.value.peer_owner_id
   peer_region   = each.value.peer_region
   peer_vpc_id   = each.value.peer_vpc_id
-  vpc_id        = aws_vpc.this.id
+  vpc_id        = local.vpc_id.id
 
   dynamic "accepter" {
     for_each = each.value.accepter != null ? toset([each.value.accepter]) : toset([])
@@ -28,6 +28,6 @@ resource "aws_vpc_peering_connection" "many" {
   tags = merge(local.Name, var.tags, each.value.tags)
 
   depends_on = [
-    aws_vpc.this,
+    aws_vpc.name,
   ]
 }
