@@ -1,6 +1,6 @@
 locals {
   Name              = { "Name" : var.name }
-  vpc               = coalesce(one([for name, vpc in aws_vpc.name : vpc]), { id = null })
+  vpc               = one([for name, vpc in aws_vpc.name : merge({ id = null }, vpc)])
   eips              = { for name, eip in aws_eip.name : name => eip }
   internet_gateways = { for name, internet_gateway in aws_internet_gateway.name : name => internet_gateway }
   nat_gateways      = { for name, nat_gateway in aws_nat_gateway.name : name => nat_gateway }
@@ -18,7 +18,7 @@ locals {
         )
       ]
     ]
-    if security_group.ingress_rules != null
+    if security_group.egress_rules != null && security_group.name != null
   ]))
   security_group_egress_rules = distinct(flatten([
     for security_group in var.security_groups : [
@@ -31,6 +31,6 @@ locals {
         )
       ]
     ]
-    if security_group.egress_rules != null
+    if security_group.egress_rules != null && security_group.name != null
   ]))
 }
