@@ -13,3 +13,51 @@ resource "aws_security_group" "name" {
 
   tags = merge(var.tags, local.Name, each.value.tags, { Name = each.key })
 }
+
+resource "aws_vpc_security_group_ingress_rule" "port" {
+  for_each = {
+    for ingress_rule in local.security_group_ingress_rules :
+    "${ingress_rule.security_group_name}:${coalesce(ingress_rule.from_port, "ALL")}" => ingress_rule
+    if ingress_rule != null
+  }
+
+  security_group_id            = each.value.security_group_id
+  cidr_ipv4                    = each.value.cidr_ipv4
+  cidr_ipv6                    = each.value.cidr_ipv6
+  description                  = each.value.description
+  from_port                    = each.value.from_port
+  ip_protocol                  = each.value.ip_protocol
+  prefix_list_id               = each.value.prefix_list_id
+  referenced_security_group_id = each.value.referenced_security_group_id
+  to_port                      = try(coalesce(each.value.to_port, each.value.from_port), null)
+
+  tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
+
+  depends_on = [
+    aws_security_group.name,
+  ]
+}
+
+resource "aws_vpc_security_group_egress_rule" "port" {
+  for_each = {
+    for egress_rule in local.security_group_egress_rules :
+    "${egress_rule.security_group_name}:${coalesce(egress_rule.from_port, "ALL")}" => egress_rule
+    if egress_rule != null
+  }
+
+  security_group_id            = each.value.security_group_id
+  cidr_ipv4                    = each.value.cidr_ipv4
+  cidr_ipv6                    = each.value.cidr_ipv6
+  description                  = each.value.description
+  from_port                    = each.value.from_port
+  ip_protocol                  = each.value.ip_protocol
+  prefix_list_id               = each.value.prefix_list_id
+  referenced_security_group_id = each.value.referenced_security_group_id
+  to_port                      = try(coalesce(each.value.to_port, each.value.from_port), null)
+
+  tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
+
+  depends_on = [
+    aws_security_group.name,
+  ]
+}
