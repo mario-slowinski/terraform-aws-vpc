@@ -1,6 +1,6 @@
 locals {
   Name              = { "Name" : var.name }
-  vpc               = one([for name, vpc in aws_vpc.name : merge({ id = null }, vpc)])
+  vpc               = merge({ id = null }, one([for name, vpc in aws_vpc.name : vpc]))
   eips              = { for name, eip in aws_eip.name : name => eip }
   internet_gateways = { for name, internet_gateway in aws_internet_gateway.name : name => internet_gateway }
   nat_gateways      = { for name, nat_gateway in aws_nat_gateway.name : name => nat_gateway }
