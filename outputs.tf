@@ -23,6 +23,11 @@ output "peerings" {
   description = "Map of VPC peerings."
 }
 
+output "security_groups" {
+  value       = local.security_groups
+  description = "Map of VPC security_groups."
+}
+
 output "subnets" {
   value       = local.subnets
   description = "Map of VPC subnets."
