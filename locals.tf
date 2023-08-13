@@ -10,12 +10,7 @@ locals {
   security_group_ingress_rules = distinct(flatten([
     for security_group in var.security_groups : [
       for ingress_rule in security_group.ingress_rules : [
-        merge(ingress_rule,
-          {
-            security_group_name = security_group.name
-            security_group_id   = local.security_groups[security_group.name].id
-          }
-        )
+        merge(ingress_rule, { security_group_name = security_group.name })
       ]
     ]
     if security_group.egress_rules != null && security_group.name != null
@@ -23,12 +18,7 @@ locals {
   security_group_egress_rules = distinct(flatten([
     for security_group in var.security_groups : [
       for egress_rule in security_group.egress_rules : [
-        merge(egress_rule,
-          {
-            security_group_name = security_group.name
-            security_group_id   = local.security_groups[security_group.name].id
-          }
-        )
+        merge(egress_rule, { security_group_name = security_group.name })
       ]
     ]
     if security_group.egress_rules != null && security_group.name != null

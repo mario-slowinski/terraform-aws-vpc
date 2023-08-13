@@ -16,6 +16,7 @@ variable "security_groups" {
       prefix_list_id               = optional(string)      # The ID of the destination prefix list
       referenced_security_group_id = optional(string)      # The destination security group that is referenced in the rule.
       to_port                      = optional(number)      # The end of port range for the TCP and UDP protocols, or an ICMP/ICMPv6 code. Equals to from_port if not given.
+      security_group_id            = optional(string)      # Security Group id, in case just adding rules to the existing one
       tags                         = optional(map(string)) # A map of tags to assign to the resource.
     })))
     egress_rules = optional(list(object({                  #  Manages an inbound (ingress) rule for a security group.
@@ -28,6 +29,7 @@ variable "security_groups" {
       prefix_list_id               = optional(string)      # The ID of the destination prefix list
       referenced_security_group_id = optional(string)      # The destination security group that is referenced in the rule.
       to_port                      = optional(number)      # The end of port range for the TCP and UDP protocols, or an ICMP/ICMPv6 code. Equals to from_port if not given.
+      security_group_id            = optional(string)      # Security Group id, in case just adding rules to the existing one
       tags                         = optional(map(string)) # A map of tags to assign to the resource.
     })))
   }))
