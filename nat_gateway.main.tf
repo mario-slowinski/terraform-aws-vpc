@@ -18,7 +18,7 @@ resource "aws_nat_gateway" "name" {
   secondary_allocation_ids           = each.value.secondary_allocation_ids
   secondary_private_ip_address_count = each.value.secondary_private_ip_address_count
   secondary_private_ip_addresses     = each.value.secondary_private_ip_addresses
-  tags                               = merge(local.Name, var.tags, each.value.tags)
+  tags                               = merge(var.tags, local.Name, each.value.tags, { Name = each.key })
 
   depends_on = [
     aws_eip.name,
