@@ -1,4 +1,4 @@
-resource "aws_route_table" "id" {
+resource "aws_route_table" "name" {
   for_each = {
     for route_table in var.route_tables :
     coalesce(route_table.name, local.vpc.id) => route_table
@@ -59,5 +59,7 @@ resource "aws_route_table" "id" {
   depends_on = [
     aws_vpc_peering_connection.vpc,
     aws_subnet.name,
+    aws_internet_gateway.name,
+    aws_nat_gateway.name,
   ]
 }
