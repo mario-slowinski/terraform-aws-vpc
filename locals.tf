@@ -7,6 +7,7 @@ locals {
   peerings          = { for vpc, peering in aws_vpc_peering_connection.vpc : vpc => peering }
   security_groups   = { for name, security_group in aws_security_group.name : name => security_group }
   subnets           = { for name, subnet in aws_subnet.name : name => subnet }
+  route_tables      = { for name, route_table in aws_route_table.name : name => route_table }
   security_group_ingress_rules = distinct(flatten([
     for security_group in var.security_groups : [
       for ingress_rule in security_group.ingress_rules : [
@@ -22,5 +23,14 @@ locals {
       ]
     ]
     if security_group.egress_rules != null && security_group.name != null
+  ]))
+  route_table_subnets = distinct(flatten([
+    for route_table in var.route_tables : [
+      for subnet in route_table.subnets : {
+        subnet      = subnet
+        route_table = route_table.name
+      }
+    ]
+    if route_table.subnets != null
   ]))
 }
