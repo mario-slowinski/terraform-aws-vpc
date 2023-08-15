@@ -1,5 +1,6 @@
 variable "security_groups" {
   type = list(object({
+    default                = bool                          # Whether it is default security group
     description            = optional(string)              # Security group description.
     name_prefix            = optional(string)              # Creates a unique name beginning with the specified prefix.
     name                   = optional(string)              # Name of the security group.
@@ -36,6 +37,7 @@ variable "security_groups" {
   description = "List of security groups."
   default = [
     {
+      default       = false,
       name          = null,
       name_prefix   = null,
       ingress_rules = [{ ip_protocol = null }],
