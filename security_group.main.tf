@@ -1,11 +1,11 @@
-resource "aws_default_security_group" "name" {
+resource "aws_default_security_group" "vpc" {
   for_each = {
     for security_group in var.security_groups :
-    coalesce(security_group.name, security_group.name_prefix) => security_group
+    local.vpc.id => security_group
     if(security_group.name != null || security_group.name_prefix != null) && security_group.default
   }
 
-  vpc_id = coalesce(each.value.vpc_id, local.vpc.id)
+  vpc_id = local.vpc.id
   ingress {
     description = "Self rule"
     protocol    = -1
@@ -35,7 +35,7 @@ resource "aws_security_group" "name" {
   name_prefix            = each.value.name_prefix
   name                   = each.value.name
   revoke_rules_on_delete = each.value.revoke_rules_on_delete
-  vpc_id                 = local.vpc.id
+  vpc_id                 = coalesce(each.value.vpc_id, local.vpc.id)
 
   tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
 }
@@ -49,7 +49,7 @@ resource "aws_vpc_security_group_ingress_rule" "port" {
 
   security_group_id = coalesce(
     each.value.security_group_id,
-    try(aws_default_security_group.name[each.value.security_group_name].id, null),
+    try(aws_default_security_group.vpc[local.vpc.id].id, null),
     try(aws_security_group.name[each.value.security_group_name].id, null),
   )
   cidr_ipv4                    = each.value.cidr_ipv4
@@ -64,7 +64,7 @@ resource "aws_vpc_security_group_ingress_rule" "port" {
   tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
 
   depends_on = [
-    aws_default_security_group.name,
+    aws_default_security_group.vpc,
     aws_security_group.name,
   ]
 }
@@ -78,7 +78,7 @@ resource "aws_vpc_security_group_egress_rule" "port" {
 
   security_group_id = coalesce(
     each.value.security_group_id,
-    try(aws_default_security_group.name[each.value.security_group_name].id, null),
+    try(aws_default_security_group.vpc[local.vpc.id].id, null),
     try(aws_security_group.name[each.value.security_group_name].id, null),
   )
   cidr_ipv4                    = each.value.cidr_ipv4
@@ -93,7 +93,7 @@ resource "aws_vpc_security_group_egress_rule" "port" {
   tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
 
   depends_on = [
-    aws_default_security_group.name,
+    aws_default_security_group.vpc,
     aws_security_group.name,
   ]
 }

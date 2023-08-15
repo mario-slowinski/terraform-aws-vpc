@@ -1,7 +1,7 @@
-resource "aws_default_route_table" "default" {
+resource "aws_default_route_table" "vpc" {
   for_each = {
     for route_table in var.route_tables :
-    coalesce(route_table.name, local.vpc.id) => route_table
+    local.vpc.id => route_table
     if route_table.routes != null && route_table.default_route_table_id != null
   }
   default_route_table_id = coalesce(each.value.default_route_table_id, try(local.vpc.default_route_table_id, null))
