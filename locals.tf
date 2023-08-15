@@ -14,7 +14,7 @@ locals {
         merge(ingress_rule, { security_group_name = security_group.name })
       ]
     ]
-    if security_group.egress_rules != null && security_group.name != null
+    if security_group.ingress_rules != null && security_group.name != null
   ]))
   security_group_egress_rules = distinct(flatten([
     for security_group in var.security_groups : [
