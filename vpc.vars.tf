@@ -81,3 +81,9 @@ variable "tags" {
   description = "Map of tags to be used instead of the ones composed automatically."
   default     = {}
 }
+
+variable "vpc_id" {
+  type        = string
+  description = "Id of VPC to modify or get some data, not to create."
+  default     = null
+}
