@@ -1,7 +1,7 @@
-resource "aws_default_security_group" "vpc" {
+resource "aws_default_security_group" "name" {
   for_each = {
     for security_group in var.security_groups :
-    local.vpc.id => security_group
+    coalesce(security_group.name, security_group.name_prefix) => security_group
     if(security_group.name != null || security_group.name_prefix != null) && security_group.default
   }
 
@@ -22,6 +22,10 @@ resource "aws_default_security_group" "vpc" {
   }
 
   tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
+
+  depends_on = [
+    aws_vpc.name,
+  ]
 }
 
 resource "aws_security_group" "name" {
@@ -50,7 +54,7 @@ resource "aws_vpc_security_group_ingress_rule" "port" {
   security_group_id = coalesce(
     each.value.security_group_id,
     try(aws_security_group.name[each.value.security_group_name].id, null),
-    try(aws_default_security_group.vpc[local.vpc.id].id, null),
+    try(aws_default_security_group.name[local.vpc.id].id, null),
   )
   cidr_ipv4                    = each.value.cidr_ipv4
   cidr_ipv6                    = each.value.cidr_ipv6
@@ -64,7 +68,7 @@ resource "aws_vpc_security_group_ingress_rule" "port" {
   tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
 
   depends_on = [
-    aws_default_security_group.vpc,
+    aws_default_security_group.name,
     aws_security_group.name,
   ]
 }
@@ -79,7 +83,7 @@ resource "aws_vpc_security_group_egress_rule" "port" {
   security_group_id = coalesce(
     each.value.security_group_id,
     try(aws_security_group.name[each.value.security_group_name].id, null),
-    try(aws_default_security_group.vpc[local.vpc.id].id, null),
+    try(aws_default_security_group.name[local.vpc.id].id, null),
   )
   cidr_ipv4                    = each.value.cidr_ipv4
   cidr_ipv6                    = each.value.cidr_ipv6
@@ -93,7 +97,7 @@ resource "aws_vpc_security_group_egress_rule" "port" {
   tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
 
   depends_on = [
-    aws_default_security_group.vpc,
+    aws_default_security_group.name,
     aws_security_group.name,
   ]
 }
