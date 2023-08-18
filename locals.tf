@@ -26,9 +26,9 @@ locals {
   ]))
   route_table_subnets = distinct(flatten([
     for route_table in var.route_tables : [
-      for subnet in route_table.subnets : {
-        subnet      = subnet
-        route_table = route_table.name
+      for cidr in route_table.subnets : {
+        subnet      = cidr
+        route_table = coalesce(route_table.id, route_table.name)
       }
     ]
     if route_table.subnets != null
