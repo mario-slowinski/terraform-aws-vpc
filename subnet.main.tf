@@ -1,5 +1,5 @@
-resource "aws_subnet" "name" {
-  for_each = { for subnet in var.subnets : subnet.name => subnet if subnet.name != null }
+resource "aws_subnet" "cidr" {
+  for_each = { for subnet in var.subnets : subnet.cidr_block => subnet if subnet.cidr_block != null }
 
   assign_ipv6_address_on_creation                = each.value.assign_ipv6_address_on_creation
   availability_zone                              = each.value.availability_zone
@@ -17,5 +17,5 @@ resource "aws_subnet" "name" {
   outpost_arn                                    = each.value.outpost_arn
   private_dns_hostname_type_on_launch            = each.value.private_dns_hostname_type_on_launch
   vpc_id                                         = coalesce(each.value.vpc_id, local.vpc.id)
-  tags                                           = merge(each.value.tags, { Name = each.key })
+  tags                                           = merge(each.value.tags, { Name = each.value.name })
 }

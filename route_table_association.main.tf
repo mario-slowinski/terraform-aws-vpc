@@ -5,7 +5,7 @@ resource "aws_route_table_association" "subnet" {
   route_table_id = try(regex("^rtb-[0-9a-z]{17}$", each.value), local.route_tables[each.key].id)
 
   depends_on = [
-    aws_subnet.name,
+    aws_subnet.cidr,
     aws_route_table.name,
   ]
 }

@@ -56,7 +56,7 @@ resource "aws_default_route_table" "name" {
 
   depends_on = [
     aws_vpc_peering_connection.vpc,
-    aws_subnet.name,
+    aws_subnet.cidr,
     aws_internet_gateway.name,
     aws_nat_gateway.name,
   ]

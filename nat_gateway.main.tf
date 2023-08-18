@@ -22,6 +22,6 @@ resource "aws_nat_gateway" "name" {
 
   depends_on = [
     aws_eip.name,
-    aws_subnet.name,
+    aws_subnet.cidr,
   ]
 }
