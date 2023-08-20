@@ -8,6 +8,11 @@ output "eips" {
   description = "Map of VPC eips attributes."
 }
 
+output "endpoints" {
+  value       = local.endpoints
+  description = "Map of VPC endpoints attributes."
+}
+
 output "internet_gateways" {
   value       = local.internet_gateways
   description = "Map of VPC internet_gateways attributes."
