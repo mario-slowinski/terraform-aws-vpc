@@ -17,7 +17,7 @@ resource "aws_security_group" "name" {
 resource "aws_vpc_security_group_ingress_rule" "port" {
   for_each = {
     for ingress_rule in local.security_group_ingress_rules :
-    "${ingress_rule.security_group_name}:${coalesce(ingress_rule.from_port, "ALL")}" => ingress_rule
+    "${coalesce(ingress_rule.cidr_ipv4, ingress_rule.cidr_ipv6)}:${coalesce(ingress_rule.from_port, "ALL")}/${ingress_rule.ip_protocol}" => ingress_rule
     if ingress_rule != null
   }
 
@@ -44,7 +44,7 @@ resource "aws_vpc_security_group_ingress_rule" "port" {
 resource "aws_vpc_security_group_egress_rule" "port" {
   for_each = {
     for egress_rule in local.security_group_egress_rules :
-    "${egress_rule.security_group_name}:${coalesce(egress_rule.from_port, "ALL")}" => egress_rule
+    "${coalesce(egress_rule.cidr_ipv4, egress_rule.cidr_ipv6)}:${coalesce(egress_rule.from_port, "ALL")}/${egress_rule.ip_protocol}" => egress_rule
     if egress_rule != null
   }
 
