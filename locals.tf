@@ -5,7 +5,7 @@ locals {
   internet_gateways = { for name, internet_gateway in aws_internet_gateway.name : name => internet_gateway }
   nat_gateways      = { for name, nat_gateway in aws_nat_gateway.name : name => nat_gateway }
   peerings          = { for vpc, peering in aws_vpc_peering_connection.vpc : vpc => peering }
-  security_groups   = { for name, security_group in aws_security_group.name : name => security_group }
+  security_groups   = { for name, security_group in merge({ "default" = data.aws_security_group.default }, aws_security_group.name) : name => security_group }
   subnets           = { for name, subnet in aws_subnet.cidr : name => subnet }
   route_tables      = { for name, route_table in aws_route_table.name : name => route_table }
   security_group_ingress_rules = distinct(flatten([
