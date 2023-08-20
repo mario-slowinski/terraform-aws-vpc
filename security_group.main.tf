@@ -11,7 +11,7 @@ resource "aws_security_group" "name" {
   revoke_rules_on_delete = each.value.revoke_rules_on_delete
   vpc_id                 = coalesce(each.value.vpc_id, local.vpc.id)
 
-  tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
+  tags = merge(each.value.tags, { Name = each.value.Name })
 }
 
 resource "aws_vpc_security_group_ingress_rule" "port" {
@@ -34,7 +34,7 @@ resource "aws_vpc_security_group_ingress_rule" "port" {
   referenced_security_group_id = each.value.referenced_security_group_id
   to_port                      = try(coalesce(each.value.to_port, each.value.from_port), null)
 
-  tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
+  tags = merge(each.value.tags, { Name = each.value.Name })
 
   depends_on = [
     aws_security_group.name,
@@ -61,7 +61,7 @@ resource "aws_vpc_security_group_egress_rule" "port" {
   referenced_security_group_id = each.value.referenced_security_group_id
   to_port                      = try(coalesce(each.value.to_port, each.value.from_port), null)
 
-  tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
+  tags = merge(each.value.tags, { Name = each.value.Name })
 
   depends_on = [
     aws_security_group.name,
