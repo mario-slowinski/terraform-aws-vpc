@@ -14,13 +14,16 @@ resource "aws_vpc_endpoint" "service" {
   ip_address_type     = each.value.ip_address_type
   route_table_ids = [
     for route_table in coalesce(each.value.route_table_ids, []) :
-    try(regex("^rtb-[0-9a-z]{17}$", route_table), local.route_tables[route_table].id)
+    one(regexall("^rtb-[0-9a-z]{17}$", route_table)) != null ? route_table : local.route_tables[route_table].id
   ]
   subnet_ids = [
     for subnet in coalesce(each.value.subnet_ids, []) :
-    try(regex("^subnet-[0-9a-z]{17}$", subnet), local.subnets[subnet].id)
+    one(regexall("^subnet-[0-9a-z]{17}$", subnet)) != null ? subnet : local.subnets[subnet].id
   ]
-  security_group_ids = each.value.security_group_ids
+  security_group_ids = [
+    for security_group in coalesce(each.value.security_group_ids, []) :
+    one(regexall("^sg-[0-9a-z]{17}$", security_group)) != null ? security_group : local.security_groups[security_group].id
+  ]
   tags = merge(
     {
       Name = join(".", [
