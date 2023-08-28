@@ -36,7 +36,7 @@ resource "aws_vpc_peering_connection_accepter" "vpc" {
   for_each = {
     for peering_connection in var.peering_connections :
     local.vpc.id => peering_connection
-    if !peering_connection.auto_accept
+    if !coalesce(peering_connection.auto_accept, true)
   }
 
   provider = aws.remote
