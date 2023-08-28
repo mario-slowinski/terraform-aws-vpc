@@ -31,3 +31,17 @@ resource "aws_vpc_peering_connection" "vpc" {
     aws_vpc.name,
   ]
 }
+
+resource "aws_vpc_peering_connection_accepter" "vpc" {
+  for_each = {
+    for peering_connection in var.peering_connections :
+    local.vpc.id => peering_connection
+    if !peering_connection.auto_accept
+  }
+
+  provider = aws.remote
+
+  vpc_peering_connection_id = aws_vpc_peering_connection.vpc[each.value.peer_vpc_id].id
+  auto_accept               = true
+  tags                      = merge(var.tags, each.value.tags, { Name = each.value.name })
+}
