@@ -1,10 +1,10 @@
 variable "route_tables" {
   type = list(object({
-    name                   = optional(string)
-    default_route_table_id = optional(string)        # Default route table id
-    id                     = optional(string)        # Route table id
-    propagating_vgws       = optional(list(string))  # A list of virtual gateways for propagation.
-    subnets                = optional(list(string))  # A list of subnet ids/names to associate route table with.
+    name             = optional(string)
+    default          = optional(bool)                # Whether to manage default route table
+    id               = optional(string)              # Route table id
+    propagating_vgws = optional(list(string))        # A list of virtual gateways for propagation.
+    subnets          = optional(list(string))        # A list of subnet ids/names to associate route table with.
     routes = list(object({                           # List of VPC routing table routes.
       destination_cidr_block      = optional(string) # The destination CIDR block.
       destination_ipv6_cidr_block = optional(string) # The destination IPv6 CIDR block.
@@ -21,7 +21,7 @@ variable "route_tables" {
       vpc_endpoint_id           = optional(string) # Identifier of a VPC Endpoint.
       vpc_peering_connection_id = optional(string) # Identifier of a VPC peering connection.
     }))
-    tags = optional(map(string))
+    tags = optional(map(string)) # A map of tags to assign to the resource.
   }))
   description = "List of VPC routing tables."
   default     = [{ default_route_table_id = null, routes = null }]

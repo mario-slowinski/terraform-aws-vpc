@@ -1,10 +1,10 @@
-resource "aws_default_route_table" "name" {
+resource "aws_default_route_table" "vpc" {
   for_each = {
     for route_table in var.route_tables :
-    coalesce(route_table.name, local.vpc.id) => route_table
-    if route_table.routes != null && route_table.default_route_table_id != null
+    local.vpc.id => route_table
+    if coalesce(route_table.default, false)
   }
-  default_route_table_id = coalesce(each.value.default_route_table_id, try(local.vpc.default_route_table_id, null))
+  default_route_table_id = local.vpc.default_route_table_id
   propagating_vgws       = each.value.propagating_vgws
 
   dynamic "route" {
@@ -21,7 +21,6 @@ resource "aws_default_route_table" "name" {
       ipv6_cidr_block            = route.value.destination_ipv6_cidr_block
       destination_prefix_list_id = route.value.destination_prefix_list_id
       core_network_arn           = route.value.core_network_arn
-      egress_only_gateway_id     = route.value.egress_only_gateway_id
       gateway_id = try(
         # if regex matches => use given gateway_id
         regex("^igw-[0-9a-z]{17}$", route.value.gateway_id),
@@ -53,11 +52,4 @@ resource "aws_default_route_table" "name" {
   }
 
   tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
-
-  depends_on = [
-    aws_vpc_peering_connection.vpc,
-    aws_subnet.cidr,
-    aws_internet_gateway.name,
-    aws_nat_gateway.name,
-  ]
 }

@@ -2,7 +2,7 @@ resource "aws_route_table" "name" {
   for_each = {
     for route_table in var.route_tables :
     coalesce(route_table.name, local.vpc.id) => route_table
-    if route_table.routes != null && route_table.default_route_table_id == null
+    if route_table.routes != null && !coalesce(route_table.default, false)
   }
   vpc_id           = local.vpc.id
   propagating_vgws = each.value.propagating_vgws
