@@ -9,7 +9,7 @@ resource "aws_default_route_table" "vpc" {
 
   dynamic "route" {
     for_each = {
-      for route in each.value.routes :
+      for route in coalesce(each.value.routes, []) :
       coalesce(
         route.destination_cidr_block,
         route.destination_ipv6_cidr_block,
