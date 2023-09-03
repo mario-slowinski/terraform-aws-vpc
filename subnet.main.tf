@@ -1,5 +1,9 @@
 resource "aws_subnet" "cidr" {
-  for_each = { for subnet in var.subnets : subnet.cidr_block => subnet if subnet.cidr_block != null }
+  for_each = {
+    for subnet in var.subnets :
+    coalesce(subnet.cidr_block, subnet.ipv6_cidr_block) => subnet
+    if subnet.cidr_block != null
+  }
 
   assign_ipv6_address_on_creation                = each.value.assign_ipv6_address_on_creation
   availability_zone                              = each.value.availability_zone
