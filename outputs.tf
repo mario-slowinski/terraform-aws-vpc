@@ -28,11 +28,6 @@ output "peerings" {
   description = "Map of VPC peerings attributes."
 }
 
-output "default_security_group" {
-  value       = data.aws_security_group.default
-  description = "Map of default VPC security_group attributes."
-}
-
 output "security_groups" {
   value       = local.security_groups
   description = "Map of VPC security_groups attributes."
