@@ -24,7 +24,7 @@ resource "aws_vpc_security_group_ingress_rule" "port" {
   security_group_id = coalesce(
     each.value.security_group_id,
     try(aws_security_group.name[each.value.security_group_name].id, null),
-    aws_default_security_group.name["default"].id,
+    try(aws_default_security_group.name["default"].id, null),
   )
   cidr_ipv4                    = each.value.cidr_ipv4
   cidr_ipv6                    = each.value.cidr_ipv6
@@ -48,7 +48,7 @@ resource "aws_vpc_security_group_egress_rule" "port" {
   security_group_id = coalesce(
     each.value.security_group_id,
     try(aws_security_group.name[each.value.security_group_name].id, null),
-    aws_default_security_group.name["default"].id,
+    try(aws_default_security_group.name["default"].id, null),
   )
   cidr_ipv4                    = each.value.cidr_ipv4
   cidr_ipv6                    = each.value.cidr_ipv6
