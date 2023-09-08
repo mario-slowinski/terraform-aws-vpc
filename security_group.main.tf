@@ -2,7 +2,7 @@ resource "aws_security_group" "name" {
   for_each = {
     for security_group in var.security_groups :
     coalesce(security_group.name, security_group.name_prefix) => security_group
-    if(security_group.name != null || security_group.name_prefix != null)
+    if(security_group.name != null || security_group.name_prefix != null) && security_group.name != "default"
   }
 
   description            = each.value.description
@@ -24,6 +24,7 @@ resource "aws_vpc_security_group_ingress_rule" "port" {
   security_group_id = coalesce(
     each.value.security_group_id,
     try(aws_security_group.name[each.value.security_group_name].id, null),
+    aws_default_security_group.name["default"].id,
   )
   cidr_ipv4                    = each.value.cidr_ipv4
   cidr_ipv6                    = each.value.cidr_ipv6
@@ -35,10 +36,6 @@ resource "aws_vpc_security_group_ingress_rule" "port" {
   to_port                      = try(coalesce(each.value.to_port, each.value.from_port), null)
 
   tags = merge(each.value.tags, { Name = each.value.Name })
-
-  depends_on = [
-    aws_security_group.name,
-  ]
 }
 
 resource "aws_vpc_security_group_egress_rule" "port" {
@@ -51,6 +48,7 @@ resource "aws_vpc_security_group_egress_rule" "port" {
   security_group_id = coalesce(
     each.value.security_group_id,
     try(aws_security_group.name[each.value.security_group_name].id, null),
+    aws_default_security_group.name["default"].id,
   )
   cidr_ipv4                    = each.value.cidr_ipv4
   cidr_ipv6                    = each.value.cidr_ipv6
@@ -62,9 +60,5 @@ resource "aws_vpc_security_group_egress_rule" "port" {
   to_port                      = try(coalesce(each.value.to_port, each.value.from_port), null)
 
   tags = merge(each.value.tags, { Name = each.value.Name })
-
-  depends_on = [
-    aws_security_group.name,
-  ]
 }
 
