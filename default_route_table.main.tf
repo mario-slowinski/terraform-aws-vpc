@@ -51,5 +51,5 @@ resource "aws_default_route_table" "vpc" {
     }
   }
 
-  tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
+  tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.Name })
 }

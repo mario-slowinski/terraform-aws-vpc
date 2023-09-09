@@ -1,8 +1,8 @@
 resource "aws_route_table" "name" {
   for_each = {
     for route_table in var.route_tables :
-    coalesce(route_table.name, local.vpc.id) => route_table
-    if route_table.routes != null && !coalesce(route_table.default, false)
+    route_table.Name => route_table
+    if route_table.Name != null && !coalesce(route_table.default, false)
   }
   vpc_id           = local.vpc.id
   propagating_vgws = each.value.propagating_vgws
@@ -54,7 +54,6 @@ resource "aws_route_table" "name" {
     }
   }
 
-  tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.name })
 
   depends_on = [
     aws_vpc_peering_connection.vpc,
@@ -62,4 +61,5 @@ resource "aws_route_table" "name" {
     aws_internet_gateway.name,
     aws_nat_gateway.name,
   ]
+  tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.Name })
 }

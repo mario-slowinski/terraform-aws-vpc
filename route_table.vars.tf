@@ -1,6 +1,6 @@
 variable "route_tables" {
   type = list(object({
-    name             = optional(string)
+    Name             = string                        # Route table name
     default          = optional(bool)                # Whether to manage default route table
     id               = optional(string)              # Route table id
     propagating_vgws = optional(list(string))        # A list of virtual gateways for propagation.
@@ -24,5 +24,5 @@ variable "route_tables" {
     tags = optional(map(string)) # A map of tags to assign to the resource.
   }))
   description = "List of VPC routing tables."
-  default     = [{ default_route_table_id = null, routes = null }]
+  default     = [{ Name = null, routes = null }]
 }

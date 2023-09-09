@@ -29,7 +29,7 @@ locals {
     for route_table in var.route_tables : [
       for cidr in route_table.subnets : {
         subnet      = cidr
-        route_table = coalesce(route_table.id, route_table.name)
+        route_table = coalesce(route_table.id, route_table.Name)
       }
     ]
     if route_table.subnets != null
