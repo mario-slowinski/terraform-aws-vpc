@@ -7,49 +7,5 @@ resource "aws_default_route_table" "vpc" {
   default_route_table_id = local.vpc.default_route_table_id
   propagating_vgws       = each.value.propagating_vgws
 
-  dynamic "route" {
-    for_each = {
-      for route in coalesce(each.value.routes, []) :
-      coalesce(
-        route.destination_cidr_block,
-        route.destination_ipv6_cidr_block,
-        route.destination_prefix_list_id
-      ) => route
-    }
-    content {
-      cidr_block                 = route.value.destination_cidr_block
-      ipv6_cidr_block            = route.value.destination_ipv6_cidr_block
-      destination_prefix_list_id = route.value.destination_prefix_list_id
-      core_network_arn           = route.value.core_network_arn
-      gateway_id = try(
-        # if regex matches => use given gateway_id
-        regex("^igw-[0-9a-z]{17}$", route.value.gateway_id),
-        # if not => try to use the one created in this module
-        aws_internet_gateway.name[route.value.gateway_id].id,
-        # if not => set to null meaning other attribute should be used
-        null
-      )
-      nat_gateway_id = try(
-        # if regex matches => use given nat_gateway_id
-        regex("^nat-[0-9a-z]{17}$", route.value.nat_gateway_id),
-        # if not => try to use the one created in this module
-        aws_nat_gateway.name[route.value.nat_gateway_id].id,
-        # if not => set to null meaning other attribute should be used
-        null
-      )
-      network_interface_id = route.value.network_interface_id
-      transit_gateway_id   = route.value.transit_gateway_id
-      vpc_endpoint_id      = route.value.vpc_endpoint_id
-      vpc_peering_connection_id = try(
-        # if regex matches => use given vpc_peering_connection_id
-        regex("^pcx-[0-9a-z]{17}$", route.value.vpc_peering_connection_id),
-        # if not => try to use the one created in this module pointed by vpc_id
-        aws_vpc_peering_connection.vpc[route.value.vpc_peering_connection_id].id,
-        # if not => set to null meaning other attribute should be used
-        null
-      )
-    }
-  }
-
   tags = merge(var.tags, local.Name, each.value.tags, { Name = each.value.Name })
 }

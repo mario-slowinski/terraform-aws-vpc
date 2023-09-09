@@ -9,6 +9,18 @@ locals {
   security_groups   = { for name, security_group in merge({ "default" = data.aws_security_group.default }, aws_security_group.name) : name => security_group }
   subnets           = { for cidr, subnet in aws_subnet.cidr : cidr => subnet }
   route_tables      = { for name, route_table in aws_route_table.name : name => route_table }
+  routes = distinct(flatten([
+    for route_table in var.route_tables : [
+      for route in route_table.routes : [
+        merge(route, {
+          route_table = route_table.Name,
+          default     = coalesce(route_table.default, false)
+          id          = route_table.id
+        })
+      ]
+    ]
+    if route_table.routes != null
+  ]))
   security_group_ingress_rules = distinct(flatten([
     for security_group in var.security_groups : [
       for ingress_rule in security_group.ingress_rules : [
